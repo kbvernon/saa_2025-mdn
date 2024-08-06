@@ -1,8 +1,8 @@
-# SAA 2025 Settlement Size
+# SAA 2025 BNN for Relative Dating
 
 <!-- badges: start -->
-[![Static Badge](https://img.shields.io/badge/Quarto-Presentation-74AADB?style=social&logo=Quarto&logoColor=74AADB&logoSize=auto&labelColor=f8f9fa)](https://quarto.org/docs/presentations/)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Static Badge](https://img.shields.io/badge/Quarto-Presentation-74AADB?style=social&logo=Quarto&logoColor=74AADB&logoSize=auto&labelColor=f8f9fa)](https://quarto.org/docs/presentations/)
 <!-- badges: end -->
 
 Repository for my presentation at the Society for American Archaeology 90th
