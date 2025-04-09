@@ -1,0 +1,193 @@
+---
+title: "Indirect Dating With Mixture Density Networks"
+author: 
+  - name: K. Blake Vernon    
+    orcid: 0000-0003-0098-5092
+    affiliations: 
+      - id: sci
+        name: Scientific Computing and Imaging Institute (UU)
+        url: https://www.sci.utah.edu/
+  - name: Brian Codding    
+    orcid: 0000-0001-7977-8568
+    affiliations: 
+      - id: utah
+        name: Department of Anthropology (UU)
+        url: https://anthro.utah.edu/
+  - name: Scott Ortman    
+    orcid: 0000-0003-0709-5287
+    affiliations: 
+      - id: colorado
+        name: Center for Collaborative Synthesis in Archaeology (CU)
+        url: https://ibsweb.colorado.edu/archaeology/
+  - name: Simon Brewer    
+    orcid: 0000-0002-6810-1911
+    affiliations: 
+      - id: ess
+        name: School of Environment, Society, and Sustainability (UU)
+        url: https://ess.utah.edu/
+date: last-modified
+github: kbvernon/saa_2025-mdn
+format:
+  revealjs:
+    minimal: true
+    theme: [default, custom.scss]
+    template-partials:
+      - title-slide.html
+    html-math-method: mathjax
+include-in-header: 
+  text: |
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+---
+
+## Objective
+
+For each $s_i \in \mathbb{R}^2$, we wish to estimate its 
+[site chronology]{style="color: #AD92A1;"}, $p_i(t)$. Averaging these gives us 
+a **regional chronology**, $p(t)$.
+
+::: {.mt-5 .mx-auto style="width: 85%;"}
+<object data="figures/goal.svg" class="w-100"></object>
+:::
+
+## Method
+
+Here we propose to estimate a regional chronology conditioned on some data $x$
+using a **Mixture Density Network**:
+
+$$
+p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{k}(x))
+$$
+
+with
+
+- $K$ component Gaussians  
+- $\pi_k(x)$ mixing weights  
+- $u_k(x)$ means  
+- $\sigma_{k}(x)$ standard deviations  
+
+## Why MDN?
+
+Because it's...  
+
+- **Probabilistic**: can quantify our uncertainty.  
+- **Flexible**: can use any kind of data, even images.  
+- **Adaptive**: can penalize Gaussian components out of the model.  
+- **Comprehensive**: can estimate site and regional chronologies
+    simultaneously.  
+- **Efficient**: can be trained with minimal data pre-processing.  
+- And it's **Familiar**, part of the same family of models used for
+    calibrating and summarizing radiocarbon dates.  
+
+## Diagnostics
+
+::: {.mt-4 .mx-auto .w-75}
+<object data="figures/diagnostics.svg" class="w-100"></object>
+:::
+
+## Challenges For Archaeology
+
+::::::::: {.mt-5 .w-100 .fs-2 .text-center layout="[[33, 33, 33], [1]]"}
+:::: {#site-size .p-2 .border .border-2 .rounded-2}
+Site Size
+
+::: {.mx-auto .mt-4 .w-75}
+<object data="figures/c2-site-size.svg" class="w-100"></object>
+:::
+::::
+
+:::: {#data-misalignment .p-2 .border .border-2 .rounded-2}
+Data Mis-alignment
+
+::: {.mx-auto .mt-4 .w-75}
+<object data="figures/c1-misaligned-data.svg" class="w-100"></object>
+:::
+::::
+
+:::: {#spatial-interaction .p-2 .border .border-2 .rounded-2}
+Spatial Interaction
+
+::: {.mx-auto .mt-4 .w-75}
+<object data="figures/c3-spatial-interaction.svg" class="w-100"></object>
+:::
+::::
+:::::::::
+
+## Coping Strategies
+
+::: {.mt-5 .w-100}
+<object data="figures/spatial-data.svg" width="100%"></object>
+:::
+
+## Spatially-Weighted Aggregates
+
+For $q$ tree ring locations, $r$ sites with recorded artifacts, and $m$ artifact
+types, define aggregate $q \times m$ artifact matrix $\boldsymbol{A}$ as:  
+
+$$
+\boldsymbol{A} = \boldsymbol{WF}
+$$
+
+where  
+
+- $\boldsymbol{W}$ is a $q \times r$ spatial weight matrix  
+- $\boldsymbol{F}$ is an $r \times m$ artifact matrix  
+
+::: {.mt-4}
+**{{< iconify fa6-regular:lightbulb >}} Intuition:** $\boldsymbol{A}$ tells 
+us how much *stuff* is around each tree ring.  
+:::
+
+## Spatial Basis Functions
+
+For a regular grid of $p$ knots, define a $q \times p$ spatial process matrix
+$\boldsymbol{B}$ as:
+
+$$
+\boldsymbol{B} = (b(i,j))
+$$
+
+where  
+
+- $b(i, j)$ is a spatial basis function that accounts for the distance between 
+  tree ring $i \in 1,...,q$ and spatial knot $j \in 1, ..., p$  
+
+::: {.mt-4}
+**{{< iconify fa6-regular:lightbulb >}} Intuition:** $\boldsymbol{B}$ 
+describes spatial patterning in the regional chronology.
+:::
+
+## Model Graph
+
+::: {.mt-5 .w-100}
+<object data="figures/model-graph.svg" class="w-100"></object>
+:::
+
+## Test Case: Central Mesa Verde
+
+::: {.mt-4 .w-100}
+<object data="figures/cmv-sites.svg" class="w-100"></object>
+:::
+
+## Regional Chronology
+
+::: {.mt-4 .mx-auto .w-75 .text-center}
+<object data="figures/regional-density.svg" class="w-100"></object>
+Overspecified with $K = 128$ mixture components
+:::
+
+## Site Chronologies
+
+::: {.mt-4 .w-100}
+<object data="figures/important-sites-1.svg" class="w-100"></object>
+:::
+
+## More Site Chronologies
+
+::: {.mt-4 .mx-auto .text-center style="width: 68%;"}
+<object data="figures/important-sites-2.svg" class="w-100"></object>
+These sites are right next to each other.
+:::
+
+## Future Directions
+
+## Acknowledgments

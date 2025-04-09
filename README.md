@@ -1,4 +1,4 @@
-# SAA 2025 BNN for Relative Dating
+# SAA 2025 MDN for Indirect Dating
 
 <!-- badges: start -->
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -9,7 +9,7 @@ Repository for my presentation at the Society for American Archaeology 90th
 Annual Meeting in Denver. Slides made using [quarto](https://quarto.org/)
 and R.
 
-**Slides:** <https://kbvernon.github.io/saa_2025-bnn_dating/>
+**Slides:** <https://kbvernon.github.io/saa_2025-mdn/>
 
 You can press "F" to enter Full Screen mode and "S" to enter Speaker view. The
 hamburger button ☰ at the bottom left of the screen opens a menu that allows you
@@ -18,27 +18,22 @@ to easily navigate the presentation.
 **Session:** "Multi-Scale Data and the History of Human Development in the US
 Southwest"
 
-**Title:** "A Bayesian neural network for relative dating in archaeology"
+**Title:** "Indirect Dating with Mixture Density Networks"
 
-**Authors:** K. Blake Vernon, Scott Ortman
+**Authors:** K. Blake Vernon, Brian F. Codding, Scott Ortman, and Simon C. 
+Brewer
 
 **Abstract**
 
 The two most powerful forces driving long-term development in human societies
 are climate change and demography, so it should come as no surprise that
-researchers working at the bleeding edge of archaeological methods are laser
-focused on finding new techniques to estimate key climate and demographic
-quantities in the past. To aid in these efforts, specifically demographic
-reconstruction, this project proposes a new spatio-temporal deep learning (DL)
-framework for the relative-dating of human settlements. The core of this new
-framework is a Bayesian Neural Network (BNN) model trained on multi-site
-archaeological tree-ring date and ceramic assemblage data. In this context, a
-BNN has two important advantages: (i) unlike other DL models, it is less
-susceptible to overfitting, and (ii) unlike other archaeological cross-dating
-methods, it provides a straightforward measure of uncertainty. We also show how
-to incorporate a Moran Eigenvector Map into a BNN to account for spatial
-autocorrelation. Training and testing of a BNN for relative dating are done
-using the cyberSW database maintained by Archaeology Southwest, which provides
-an extremely large ceramic assemblage dataset covering much of the US Southwest.
-Importantly, the approach should be generalizable to any temporally diagnostic
-artifact type for which count data exist.
+so much archaeological research is focused on developing new methods for 
+estimating key climate and demographic quantities in the past. To aid in these 
+efforts, specifically demographic reconstruction, this project proposes a new 
+spatio-temporal deep learning (DL) framework indirect dating. The core of this 
+new framework is a Mixture Density Network (MDN) trained on multi-site 
+archaeological tree-ring date and ceramic assemblage data. We also show how
+to handle mis-aligned data using spatially-weighted feature aggregation and 
+spatial basis functions. Training and testing data are provided by cyberSW,
+including an extremely large ceramic assemblage dataset covering much of the US 
+Southwest. 
