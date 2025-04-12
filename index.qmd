@@ -39,20 +39,42 @@ include-in-header:
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 ---
 
-## Objective
+## The Goal
 
-For each $s_i \in \mathbb{R}^2$, we wish to estimate its 
-[site chronology]{style="color: #AD92A1;"}, $p_i(t)$. Averaging these gives us 
-a **regional chronology**, $p(t)$.
+Estimate a **regional chronology $p(t)$** that effectively summarizes the 
+individual [chronologies $p_i(t)$]{.text-purple-light} of all sites $s_i$ in a 
+region of interest. 
 
-::: {.mt-5 .mx-auto style="width: 85%;"}
+::: {.mt-5 .mr-auto style="width: 85%;"}
 <object data="figures/goal.svg" class="w-100"></object>
 :::
 
-## Method
+## But Why a Chronology? {.center}
 
-Here we propose to estimate a regional chronology conditioned on some data $x$
-using a **Mixture Density Network**:
+::: {.fs-1}
+Because **climate {{< iconify mdi:climate-change >}}** and **population {{< iconify pepicons-pencil:people >}}** 
+are the **levers {{< iconify game-icons:lever >}}** of human history!
+:::  
+
+## And Why Indirect Dating? {.center}
+
+::: {.fs-1}
+Because **direct dates {{< iconify solar:calendar-outline >}}** are 
+**expensive {{< iconify nimbus:money >}}** and often **destructive {{< iconify game-icons:bright-explosion >}}**.
+:::
+
+## OK, So Why Not Aoristic Sums? {.center}
+
+::: {.fs-1}
+Because (1) **date ranges {{< iconify bi:calendar4-range >}}** are never tested 
+and (2) **site chronologies {{< iconify carbon:chart-histogram >}}** are 
+assumed to be independent.
+:::
+
+## An AI Alternative
+
+We can estimate a regional chronology conditioned on some data $x$ using a
+**Mixture Density Network**:
 
 $$
 p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{k}(x))
@@ -70,58 +92,42 @@ with
 Because it's...  
 
 - **Probabilistic**: can quantify our uncertainty.  
-- **Flexible**: can use any kind of data, even images.  
+- **Flexible**: can use any kind of input data, even images.  
 - **Adaptive**: can penalize Gaussian components out of the model.  
 - **Comprehensive**: can estimate site and regional chronologies
-    simultaneously.  
+  simultaneously.  
 - **Efficient**: can be trained with minimal data pre-processing.  
-- And it's **Familiar**, part of the same family of models used for
-    calibrating and summarizing radiocarbon dates.  
+- **Universal**: can be trained with any type of direct date (e.g., radiocarbon 
+  or tree ring).
+- And **Familiar**: part of the same family of models used for
+  calibrating and summarizing radiocarbon dates.  
 
-## Diagnostics
+## Still A Gaggle of Challenges
 
-::: {.mt-4 .mx-auto .w-75}
-<object data="figures/diagnostics.svg" class="w-100"></object>
+::: {.no-indent}
+1. Aligning data sets across sites  
+<object data="figures/c-misaligned-data.svg" class="mt-1"></object>
+2. Accommodating variable site sizes  
+<object data="figures/c-site-size.svg" class="mt-1"></object> 
+3. Addressing inconsistent site definitions  
+<object data="figures/c-site-definitions.svg" class="mt-1"></object> 
 :::
 
-## Challenges For Archaeology
+## Coping Strategy
 
-::::::::: {.mt-5 .w-100 .fs-2 .text-center layout="[[33, 33, 33], [1]]"}
-:::: {#site-size .p-2 .border .border-2 .rounded-2}
-Site Size
-
-::: {.mx-auto .mt-4 .w-75}
-<object data="figures/c2-site-size.svg" class="w-100"></object>
-:::
-::::
-
-:::: {#data-misalignment .p-2 .border .border-2 .rounded-2}
-Data Mis-alignment
-
-::: {.mx-auto .mt-4 .w-75}
-<object data="figures/c1-misaligned-data.svg" class="w-100"></object>
-:::
-::::
-
-:::: {#spatial-interaction .p-2 .border .border-2 .rounded-2}
-Spatial Interaction
-
-::: {.mx-auto .mt-4 .w-75}
-<object data="figures/c3-spatial-interaction.svg" class="w-100"></object>
-:::
-::::
-:::::::::
-
-## Coping Strategies
-
-::: {.mt-5 .w-100}
+::: {.mt-5 .mr-auto .w-75}
 <object data="figures/spatial-data.svg" width="100%"></object>
 :::
 
-## Spatially-Weighted Aggregates
+::: {.mt-5}
+**{{< iconify fa6-regular:lightbulb >}} Intuition:** We want to loosen the 
+requirement of direct association and look instead at the wider context.  
+:::
 
-For $q$ tree ring locations, $r$ sites with recorded artifacts, and $m$ artifact
-types, define aggregate $q \times m$ artifact matrix $\boldsymbol{A}$ as:  
+## Spatial Aggregates
+
+For $q$ direct dates, $r$ sites with recorded artifacts, and $m$ artifact types, 
+define aggregate $q \times m$ artifact matrix $\boldsymbol{A}$ as:  
 
 $$
 \boldsymbol{A} = \boldsymbol{WF}
@@ -130,11 +136,11 @@ $$
 where  
 
 - $\boldsymbol{W}$ is a $q \times r$ spatial weight matrix  
-- $\boldsymbol{F}$ is an $r \times m$ artifact matrix  
+- $\boldsymbol{F}$ is a disaggregate $r \times m$ artifact matrix  
 
 ::: {.mt-4}
 **{{< iconify fa6-regular:lightbulb >}} Intuition:** $\boldsymbol{A}$ tells 
-us how much *stuff* is around each tree ring.  
+us how much *stuff* is around each direct date.  
 :::
 
 ## Spatial Basis Functions
@@ -149,11 +155,11 @@ $$
 where  
 
 - $b(i, j)$ is a spatial basis function that accounts for the distance between 
-  tree ring $i \in 1,...,q$ and spatial knot $j \in 1, ..., p$  
+  direct date $i \in 1,...,q$ and spatial knot $j \in 1, ..., p$  
 
 ::: {.mt-4}
 **{{< iconify fa6-regular:lightbulb >}} Intuition:** $\boldsymbol{B}$ 
-describes spatial patterning in the regional chronology.
+tells us how direct dates are related in space.
 :::
 
 ## Model Graph
@@ -164,16 +170,33 @@ describes spatial patterning in the regional chronology.
 
 ## Test Case: Central Mesa Verde
 
+::: {.mt-4 .w-50 .mx-auto}
+![](figures/mesa-verde.png){width="75%"}
+:::
+
+## Diagnostics
+
 ::: {.mt-4 .w-100}
 <object data="figures/cmv-sites.svg" class="w-100"></object>
 :::
 
+## Spatial Aggregate Example
+
+::: {.mt-4 .w-75}
+<object data="figures/bluff-br.svg" class="w-100"></object>
+:::
+
+::: {.ms-5 .mt-0}
+[{{< iconify codicon:circle-filled >}}]{.text-blue} Tree Rings
+:::
+
 ## Regional Chronology
 
-::: {.mt-4 .mx-auto .w-75 .text-center}
+::: {.mt-4 .w-75}
 <object data="figures/regional-density.svg" class="w-100"></object>
-Overspecified with $K = 128$ mixture components
 :::
+
+Overspecified with $K = 128$ mixture components
 
 ## Site Chronologies
 
@@ -181,13 +204,27 @@ Overspecified with $K = 128$ mixture components
 <object data="figures/important-sites-1.svg" class="w-100"></object>
 :::
 
+::: {.ms-5 .mt-0}
+[{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
+:::
+
 ## More Site Chronologies
 
-::: {.mt-4 .mx-auto .text-center style="width: 68%;"}
+::: {.mt-4 .w-75}
 <object data="figures/important-sites-2.svg" class="w-100"></object>
+:::
+
+::: {.ms-5 .mt-0}
+[{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
+
 These sites are right next to each other.
 :::
 
-## Future Directions
+## What Next?
+
+1. Reduce **over-fitting {{< iconify mdi:fit-to-page-outline >}}**.  
+2. Account for **durations {{< iconify bi:calendar4-range >}}**, not just construction dates.  
+3. Correlate **spatial {{< iconify carbon:map >}} and temporal {{< iconify material-symbols:update-rounded >}} proximity** in a more realistic way.  
+3. Get more **data {{< iconify material-symbols:save-outline-rounded >}}**!
 
 ## Acknowledgments

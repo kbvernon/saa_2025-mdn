@@ -20,8 +20,6 @@ $presentation-h3-font-size: 1.9em;
 $presentation-h4-font-size: 1.7em;
 $presentation-h5-font-size: 1.5em;
 
-$enable-cssgrid: true;
-
 /*-- scss:rules --*/
 .reveal {
 
@@ -134,7 +132,19 @@ $enable-cssgrid: true;
         color: $color;
     }
 
+    .text-#{$name}-light {
+        color: lighten($color, 0.5);
+    }
+
+    .text-#{$name}-dark {
+        color: darken($color, 0.5);
+    }
+
     .bg-#{$name} {
         background-color: $color;
     }
+}
+
+.no-indent *:first-child {
+    margin-left: 0;
 }

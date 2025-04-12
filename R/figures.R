@@ -1,6 +1,13 @@
 library(colorspace)
+library(magick)
 library(patchwork)
+library(sf)
+library(terra)
+library(tidyterra)
 library(tidyverse)
+library(tigris)
+
+# default theme ----------------------------------------------------------
 
 theme_set(theme_bw(14))
 
@@ -11,6 +18,24 @@ theme_update(
   panel.grid.minor = element_blank(),
   text = element_text(family = "Public Sans")
 )
+
+# data -------------------------------------------------------------------
+
+tree_rings <- read_csv("_data/tree-rings.csv")
+
+ceramics <- read_csv("_data/ceramic-presence.csv")
+lookup <- read_csv("_data/ceramic-lookup.csv")
+
+four_corners <- states() |>
+  rename_with(tolower) |>
+  filter(name %in% c("Utah", "Colorado", "New Mexico", "Arizona")) |>
+  select(name)
+
+# probability distributions
+region <- read_csv("_data/region.csv")
+sites <- read_csv("_data/important-sites.csv")
+
+# random sites -----------------------------------------------------------
 
 N <- 15
 
@@ -46,6 +71,8 @@ p1 <- ggplot(sites, aes(x, y)) +
   ) +
   coord_cartesian(xlim = c(0, 10), ylim = c(0, 10)) +
   theme(plot.margin = margin(r = 6))
+
+# sample gmm -------------------------------------------------------------
 
 rgmm <- function(n, theta) {
   # rmultinom returns a length(prob) x n matrix
@@ -143,9 +170,99 @@ ggsave(
   height = 2.8
 )
 
-tree_rings <- read_csv("_data/tree-rings.csv")
+# mesa verde -------------------------------------------------------------
 
-ceramics <- read_csv("_data/ceramic-presence.csv")
+bb8 <- tree_rings |>
+  st_as_sf(coords = c("x", "y"), crs = 26912) |>
+  st_buffer(20000) |>
+  st_transform(4269) |>
+  st_bbox()
+
+dx <- bb8[["xmax"]] - bb8[["xmin"]]
+dy <- bb8[["ymax"]] - bb8[["ymin"]]
+
+dem <- file.path(
+  "https://prd-tnm.s3.amazonaws.com/StagedProducts",
+  "Elevation/13/TIFF",
+  "USGS_Seamless_DEM_13.vrt"
+) |>
+  rast(win = ext(bb8)) |>
+  aggregate(fact = 4)
+
+slope <- terrain(dem, "slope", unit = "radians")
+aspect <- terrain(dem, "aspect", unit = "radians")
+
+hill <- shade(slope, aspect, 30, 45)
+hill <- setValues(hill, scales::rescale(values(hill), to = c(1, 1000)))
+hill <- round(hill)
+
+bb9 <- tree_rings |>
+  st_as_sf(coords = c("x", "y"), crs = 26912) |>
+  st_buffer(1000) |>
+  st_transform(4269) |>
+  st_bbox() |>
+  st_as_sfc()
+
+cover <- st_sym_difference(bb9, st_as_sfc(bb8))
+
+ggplot() +
+  geom_spatraster(
+    data = hill,
+    fill = hcl.colors(1000, "Grays")[values(hill)],
+    maxcell = Inf
+  ) +
+  geom_spatraster(data = dem, alpha = 0.5) +
+  scale_fill_hypso_c("utah_1") +
+  geom_sf(
+    data = cover,
+    fill = alpha("white", 0.5),
+    color = "transparent"
+  ) +
+  geom_sf(
+    data = four_corners,
+    fill = "transparent",
+    color = "#829399",
+    linewidth = 0.2
+  ) +
+  annotate(
+    "text",
+    x = c(rep(bb8[["xmin"]] + 0.02, 2), rep(bb8[["xmax"]] - 0.02, 2)),
+    y = 36.999 + c(0.02, -0.02, 0.02, -0.02),
+    label = c("UT", "AZ", "CO", "NM"),
+    size = 11 / .pt,
+    hjust = c(0, 0, 1, 1),
+    vjust = c(0, 1, 0, 1),
+    color = "#829399"
+  ) +
+  coord_sf(
+    crs = 4269,
+    datum = 4269,
+    xlim = bb8[c("xmin", "xmax")],
+    ylim = bb8[c("ymin", "ymax")],
+    expand = FALSE
+  ) +
+  theme(
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+ggsave(
+  "figures/mesa-verde.png",
+  width = 6,
+  height = 6 * (dy / dx),
+  bg = "white"
+)
+
+image_read("figures/mesa-verde.png") |>
+  image_trim() |>
+  image_write("figures/mesa-verde.png")
+
+image_read("figures/mesa-verde.png") |>
+  image_negate() |>
+  image_modulate(hue = 200) |>
+  image_write("figures/mesa-verde-invert.png")
+
+# mesa verde data --------------------------------------------------------
 
 p1 <- ggplot(ceramics, aes(x, y)) +
   geom_point(
@@ -154,6 +271,10 @@ p1 <- ggplot(ceramics, aes(x, y)) +
     color = darken("#533747", 0.6),
     alpha = 0.33,
     size = 2
+  ) +
+  coord_cartesian(
+    xlim = range(ceramics[["x"]]),
+    ylim = range(ceramics[["y"]])
   ) +
   labs(
     x = NULL,
@@ -173,6 +294,10 @@ p2 <- ggplot(tree_rings, aes(x, y)) +
     color = darken("#CD5334", 0.6),
     alpha = 0.33,
     size = 2
+  ) +
+  coord_cartesian(
+    xlim = range(ceramics[["x"]]),
+    ylim = range(ceramics[["y"]])
   ) +
   labs(
     x = NULL,
@@ -212,7 +337,69 @@ ggsave(
   height = 3.5
 )
 
-region <- read_csv("_data/region.csv")
+# spatial aggregates -----------------------------------------------------
+
+bluff_br <- ceramics |>
+  filter(c23 == 1) |>
+  select(x, y)
+
+p1 <- ggplot() +
+  geom_density2d_filled(
+    data = bluff_br,
+    aes(x, y),
+    bins = 9,
+    color = "white",
+    linewidth = 0.1
+  ) +
+  scale_fill_brewer(palette = "YlOrBr") +
+  geom_point(
+    data = tree_rings,
+    aes(x, y),
+    color = alpha("#28666E", 0.1)
+  ) +
+  coord_cartesian(
+    xlim = range(ceramics[["x"]]),
+    ylim = range(ceramics[["y"]]),
+    expand = FALSE
+  ) +
+  labs(
+    x = "Easting",
+    y = "Northing",
+    title = "Bluff Black-on-red"
+  ) +
+  theme(
+    legend.position = "none",
+    panel.background = element_rect(fill = "#FFFFE5")
+  )
+
+d <- MASS::kde2d(bluff_br[["x"]], bluff_br[["y"]])
+d <- rast(d)
+
+names(d) <- "density"
+
+p2 <- d |>
+  terra::extract(as.matrix(tree_rings[c("x", "y")])) |>
+  as_tibble() |>
+  mutate(date = tree_rings[["date"]]) |>
+  filter(!is.na(density)) |>
+  ggplot(aes(density, date)) +
+  geom_point(alpha = 0.1, color = "#28666E") +
+  labs(
+    x = "Density of Bluff B-r Sites",
+    y = "Tree Ring Date"
+  )
+
+p1 + p2
+
+ggsave(
+  "figures/bluff-br.svg",
+  width = 6.8,
+  height = 3.5
+)
+
+# models -----------------------------------------------------------------
+
+
 
 tree_rings <- density(tree_rings$date)
 tree_rings <- tibble(year = tree_rings$x, density = tree_rings$y)
@@ -220,7 +407,7 @@ tree_rings <- tree_rings |>
   mutate(density = density / max(density)) |>
   filter(year >= 575, year <= 1400)
 
-p3 <- ggplot(tree_rings, aes(year)) +
+p1 <- ggplot(tree_rings, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
@@ -247,7 +434,7 @@ p3 <- ggplot(tree_rings, aes(year)) +
 
 region <- region |> mutate(density = density / max(density))
 
-p4 <- ggplot(region, aes(year)) +
+p2 <- ggplot(region, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
@@ -281,7 +468,7 @@ ggsave(
 )
 
 tree_rings <- read_csv("_data/tree-rings.csv")
-sites <- read_csv("_data/important-sites.csv")
+
 
 sites1 <- sites |>
   filter(

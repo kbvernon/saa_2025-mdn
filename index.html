@@ -13,7 +13,7 @@
   <meta name="author" content="Brian Codding">
   <meta name="author" content="Scott Ortman">
   <meta name="author" content="Simon Brewer">
-  <meta name="dcterms.date" content="2025-04-09">
+  <meta name="dcterms.date" content="2025-04-12">
   <title>Indirect Dating With Mixture Density Networks</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,7 +33,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-72341e26a33713ff19326a3a25bcb494.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-226e2b31cd891684a2563e4feb24986a.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -202,7 +202,7 @@
         </div>
         <div class="denver-details">
             <div class="details">
-                <p class="date">2025-04-09</p>
+                <p class="date">2025-04-12</p>
                                 <p>
                     <a href="https://github.com/kbvernon/saa_2025-mdn">
                         <span class="fa6-brands--github"></span> kbvernon/saa_2025-mdn
@@ -212,17 +212,35 @@
         </div>
     </div>
 </section>
-<section id="objective" class="slide level2">
-<h2>Objective</h2>
-<p>For each <span class="math inline">\(s_i \in \mathbb{R}^2\)</span>, we wish to estimate its <span style="color: #AD92A1;">site chronology</span>, <span class="math inline">\(p_i(t)\)</span>. Averaging these gives us a <strong>regional chronology</strong>, <span class="math inline">\(p(t)\)</span>.</p>
-<div class="mt-5 mx-auto" style="width: 85%;">
+<section id="the-goal" class="slide level2">
+<h2>The Goal</h2>
+<p>Estimate a <strong>regional chronology <span class="math inline">\(p(t)\)</span></strong> that effectively summarizes the individual <span class="text-purple-light">chronologies <span class="math inline">\(p_i(t)\)</span></span> of all sites <span class="math inline">\(s_i\)</span> in a region of interest.</p>
+<div class="mt-5 mr-auto" style="width: 85%;">
 <object data="figures/goal.svg" class="w-100">
 </object>
 </div>
 </section>
-<section id="method" class="slide level2">
-<h2>Method</h2>
-<p>Here we propose to estimate a regional chronology conditioned on some data <span class="math inline">\(x\)</span> using a <strong>Mixture Density Network</strong>:</p>
+<section id="but-why-a-chronology" class="slide level2 center">
+<h2>But Why a Chronology?</h2>
+<div class="fs-1">
+<p>Because <strong>climate <iconify-icon role="img" inline="" icon="mdi:climate-change" aria-label="Icon climate-change from mdi Iconify.design set." title="Icon climate-change from mdi Iconify.design set."></iconify-icon></strong> and <strong>population <iconify-icon role="img" inline="" icon="pepicons-pencil:people" aria-label="Icon people from pepicons-pencil Iconify.design set." title="Icon people from pepicons-pencil Iconify.design set."></iconify-icon></strong> are the <strong>levers <iconify-icon role="img" inline="" icon="game-icons:lever" aria-label="Icon lever from game-icons Iconify.design set." title="Icon lever from game-icons Iconify.design set."></iconify-icon></strong> of human history!</p>
+</div>
+</section>
+<section id="and-why-indirect-dating" class="slide level2 center">
+<h2>And Why Indirect Dating?</h2>
+<div class="fs-1">
+<p>Because <strong>direct dates <iconify-icon role="img" inline="" icon="solar:calendar-outline" aria-label="Icon calendar-outline from solar Iconify.design set." title="Icon calendar-outline from solar Iconify.design set."></iconify-icon></strong> are <strong>expensive <iconify-icon role="img" inline="" icon="nimbus:money" aria-label="Icon money from nimbus Iconify.design set." title="Icon money from nimbus Iconify.design set."></iconify-icon></strong> and often <strong>destructive <iconify-icon role="img" inline="" icon="game-icons:bright-explosion" aria-label="Icon bright-explosion from game-icons Iconify.design set." title="Icon bright-explosion from game-icons Iconify.design set."></iconify-icon></strong>.</p>
+</div>
+</section>
+<section id="ok-so-why-not-aoristic-sums" class="slide level2 center">
+<h2>OK, So Why Not Aoristic Sums?</h2>
+<div class="fs-1">
+<p>Because (1) <strong>date ranges <iconify-icon role="img" inline="" icon="bi:calendar4-range" aria-label="Icon calendar4-range from bi Iconify.design set." title="Icon calendar4-range from bi Iconify.design set."></iconify-icon></strong> are never tested and (2) <strong>site chronologies <iconify-icon role="img" inline="" icon="carbon:chart-histogram" aria-label="Icon chart-histogram from carbon Iconify.design set." title="Icon chart-histogram from carbon Iconify.design set."></iconify-icon></strong> are assumed to be independent.</p>
+</div>
+</section>
+<section id="an-ai-alternative" class="slide level2">
+<h2>An AI Alternative</h2>
+<p>We can estimate a regional chronology conditioned on some data <span class="math inline">\(x\)</span> using a <strong>Mixture Density Network</strong>:</p>
 <p><span class="math display">\[
 p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{k}(x))
 \]</span></p>
@@ -243,7 +261,7 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 <ul>
 <li><strong>Probabilistic</strong>: can quantify our uncertainty.<br>
 </li>
-<li><strong>Flexible</strong>: can use any kind of data, even images.<br>
+<li><strong>Flexible</strong>: can use any kind of input data, even images.<br>
 </li>
 <li><strong>Adaptive</strong>: can penalize Gaussian components out of the model.<br>
 </li>
@@ -251,57 +269,36 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 </li>
 <li><strong>Efficient</strong>: can be trained with minimal data pre-processing.<br>
 </li>
-<li>And it’s <strong>Familiar</strong>, part of the same family of models used for calibrating and summarizing radiocarbon dates.</li>
+<li><strong>Universal</strong>: can be trained with any type of direct date (e.g., radiocarbon or tree ring).</li>
+<li>And <strong>Familiar</strong>: part of the same family of models used for calibrating and summarizing radiocarbon dates.</li>
 </ul>
 </section>
-<section id="diagnostics" class="slide level2">
-<h2>Diagnostics</h2>
-<div class="mt-4 mx-auto w-75">
-<object data="figures/diagnostics.svg" class="w-100">
-</object>
+<section id="still-a-gaggle-of-challenges" class="slide level2">
+<h2>Still A Gaggle of Challenges</h2>
+<div class="no-indent">
+<ol type="1">
+<li>Aligning data sets across sites<br>
+<object data="figures/c-misaligned-data.svg" class="mt-1"></object></li>
+<li>Accommodating variable site sizes<br>
+<object data="figures/c-site-size.svg" class="mt-1"></object></li>
+<li>Addressing inconsistent site definitions<br>
+<object data="figures/c-site-definitions.svg" class="mt-1"></object></li>
+</ol>
 </div>
 </section>
-<section id="challenges-for-archaeology" class="slide level2">
-<h2>Challenges For Archaeology</h2>
-<div>
-
-</div>
-<div class="mt-5 w-100 fs-2 text-center quarto-layout-panel" data-layout="[[33, 33, 33], [1]]">
-<div class="quarto-layout-row">
-<div id="site-size" class="p-2 border border-2 rounded-2 quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<p>Site Size</p>
-<div class="mx-auto mt-4 w-75">
-<object data="figures/c2-site-size.svg" class="w-100">
-</object>
-</div>
-</div>
-<div id="data-misalignment" class="p-2 border border-2 rounded-2 quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<p>Data Mis-alignment</p>
-<div class="mx-auto mt-4 w-75">
-<object data="figures/c1-misaligned-data.svg" class="w-100">
-</object>
-</div>
-</div>
-<div id="spatial-interaction" class="p-2 border border-2 rounded-2 quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<p>Spatial Interaction</p>
-<div class="mx-auto mt-4 w-75">
-<object data="figures/c3-spatial-interaction.svg" class="w-100">
-</object>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="coping-strategies" class="slide level2">
-<h2>Coping Strategies</h2>
-<div class="mt-5 w-100">
+<section id="coping-strategy" class="slide level2">
+<h2>Coping Strategy</h2>
+<div class="mt-5 mr-auto w-75">
 <object data="figures/spatial-data.svg" width="100%">
 </object>
 </div>
+<div class="mt-5">
+<p><strong><iconify-icon role="img" inline="" icon="fa6-regular:lightbulb" aria-label="Icon lightbulb from fa6-regular Iconify.design set." title="Icon lightbulb from fa6-regular Iconify.design set."></iconify-icon> Intuition:</strong> We want to loosen the requirement of direct association and look instead at the wider context.</p>
+</div>
 </section>
-<section id="spatially-weighted-aggregates" class="slide level2">
-<h2>Spatially-Weighted Aggregates</h2>
-<p>For <span class="math inline">\(q\)</span> tree ring locations, <span class="math inline">\(r\)</span> sites with recorded artifacts, and <span class="math inline">\(m\)</span> artifact types, define aggregate <span class="math inline">\(q \times m\)</span> artifact matrix <span class="math inline">\(\boldsymbol{A}\)</span> as:</p>
+<section id="spatial-aggregates" class="slide level2">
+<h2>Spatial Aggregates</h2>
+<p>For <span class="math inline">\(q\)</span> direct dates, <span class="math inline">\(r\)</span> sites with recorded artifacts, and <span class="math inline">\(m\)</span> artifact types, define aggregate <span class="math inline">\(q \times m\)</span> artifact matrix <span class="math inline">\(\boldsymbol{A}\)</span> as:</p>
 <p><span class="math display">\[
 \boldsymbol{A} = \boldsymbol{WF}
 \]</span></p>
@@ -309,10 +306,10 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 <ul>
 <li><span class="math inline">\(\boldsymbol{W}\)</span> is a <span class="math inline">\(q \times r\)</span> spatial weight matrix<br>
 </li>
-<li><span class="math inline">\(\boldsymbol{F}\)</span> is an <span class="math inline">\(r \times m\)</span> artifact matrix</li>
+<li><span class="math inline">\(\boldsymbol{F}\)</span> is a disaggregate <span class="math inline">\(r \times m\)</span> artifact matrix</li>
 </ul>
 <div class="mt-4">
-<p><strong><iconify-icon role="img" inline="" icon="fa6-regular:lightbulb" aria-label="Icon lightbulb from fa6-regular Iconify.design set." title="Icon lightbulb from fa6-regular Iconify.design set."></iconify-icon> Intuition:</strong> <span class="math inline">\(\boldsymbol{A}\)</span> tells us how much <em>stuff</em> is around each tree ring.</p>
+<p><strong><iconify-icon role="img" inline="" icon="fa6-regular:lightbulb" aria-label="Icon lightbulb from fa6-regular Iconify.design set." title="Icon lightbulb from fa6-regular Iconify.design set."></iconify-icon> Intuition:</strong> <span class="math inline">\(\boldsymbol{A}\)</span> tells us how much <em>stuff</em> is around each direct date.</p>
 </div>
 </section>
 <section id="spatial-basis-functions" class="slide level2">
@@ -323,10 +320,10 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 \]</span></p>
 <p>where</p>
 <ul>
-<li><span class="math inline">\(b(i, j)\)</span> is a spatial basis function that accounts for the distance between tree ring <span class="math inline">\(i \in 1,...,q\)</span> and spatial knot <span class="math inline">\(j \in 1, ..., p\)</span></li>
+<li><span class="math inline">\(b(i, j)\)</span> is a spatial basis function that accounts for the distance between direct date <span class="math inline">\(i \in 1,...,q\)</span> and spatial knot <span class="math inline">\(j \in 1, ..., p\)</span></li>
 </ul>
 <div class="mt-4">
-<p><strong><iconify-icon role="img" inline="" icon="fa6-regular:lightbulb" aria-label="Icon lightbulb from fa6-regular Iconify.design set." title="Icon lightbulb from fa6-regular Iconify.design set."></iconify-icon> Intuition:</strong> <span class="math inline">\(\boldsymbol{B}\)</span> describes spatial patterning in the regional chronology.</p>
+<p><strong><iconify-icon role="img" inline="" icon="fa6-regular:lightbulb" aria-label="Icon lightbulb from fa6-regular Iconify.design set." title="Icon lightbulb from fa6-regular Iconify.design set."></iconify-icon> Intuition:</strong> <span class="math inline">\(\boldsymbol{B}\)</span> tells us how direct dates are related in space.</p>
 </div>
 </section>
 <section id="model-graph" class="slide level2">
@@ -338,18 +335,34 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 </section>
 <section id="test-case-central-mesa-verde" class="slide level2">
 <h2>Test Case: Central Mesa Verde</h2>
+<div class="mt-4 w-50 mx-auto">
+<p><img data-src="figures/mesa-verde.png" style="width:75.0%"></p>
+</div>
+</section>
+<section id="diagnostics" class="slide level2">
+<h2>Diagnostics</h2>
 <div class="mt-4 w-100">
 <object data="figures/cmv-sites.svg" class="w-100">
 </object>
 </div>
 </section>
+<section id="spatial-aggregate-example" class="slide level2">
+<h2>Spatial Aggregate Example</h2>
+<div class="mt-4 w-75">
+<object data="figures/bluff-br.svg" class="w-100">
+</object>
+</div>
+<div class="ms-5 mt-0">
+<p><span class="text-blue"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Rings</p>
+</div>
+</section>
 <section id="regional-chronology" class="slide level2">
 <h2>Regional Chronology</h2>
-<div class="mt-4 mx-auto w-75 text-center">
+<div class="mt-4 w-75">
 <object data="figures/regional-density.svg" class="w-100">
 </object>
-<p>Overspecified with <span class="math inline">\(K = 128\)</span> mixture components</p>
 </div>
+<p>Overspecified with <span class="math inline">\(K = 128\)</span> mixture components</p>
 </section>
 <section id="site-chronologies" class="slide level2">
 <h2>Site Chronologies</h2>
@@ -357,17 +370,32 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 <object data="figures/important-sites-1.svg" class="w-100">
 </object>
 </div>
+<div class="ms-5 mt-0">
+<p><span class="text-yellow"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Ring Dates</p>
+</div>
 </section>
 <section id="more-site-chronologies" class="slide level2">
 <h2>More Site Chronologies</h2>
-<div class="mt-4 mx-auto text-center" style="width: 68%;">
+<div class="mt-4 w-75">
 <object data="figures/important-sites-2.svg" class="w-100">
 </object>
+</div>
+<div class="ms-5 mt-0">
+<p><span class="text-yellow"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Ring Dates</p>
 <p>These sites are right next to each other.</p>
 </div>
 </section>
-<section id="future-directions" class="slide level2">
-<h2>Future Directions</h2>
+<section id="what-next" class="slide level2">
+<h2>What Next?</h2>
+<ol type="1">
+<li>Reduce <strong>over-fitting <iconify-icon role="img" inline="" icon="mdi:fit-to-page-outline" aria-label="Icon fit-to-page-outline from mdi Iconify.design set." title="Icon fit-to-page-outline from mdi Iconify.design set."></iconify-icon></strong>.<br>
+</li>
+<li>Account for <strong>durations <iconify-icon role="img" inline="" icon="bi:calendar4-range" aria-label="Icon calendar4-range from bi Iconify.design set." title="Icon calendar4-range from bi Iconify.design set."></iconify-icon></strong>, not just construction dates.<br>
+</li>
+<li>Correlate <strong>spatial <iconify-icon role="img" inline="" icon="carbon:map" aria-label="Icon map from carbon Iconify.design set." title="Icon map from carbon Iconify.design set."></iconify-icon> and temporal <iconify-icon role="img" inline="" icon="material-symbols:update-rounded" aria-label="Icon update-rounded from material-symbols Iconify.design set." title="Icon update-rounded from material-symbols Iconify.design set."></iconify-icon> proximity</strong> in a more realistic way.<br>
+</li>
+<li>Get more <strong>data <iconify-icon role="img" inline="" icon="material-symbols:save-outline-rounded" aria-label="Icon save-outline-rounded from material-symbols Iconify.design set." title="Icon save-outline-rounded from material-symbols Iconify.design set."></iconify-icon></strong>!</li>
+</ol>
 </section>
 <section id="acknowledgments" class="slide level2">
 <h2>Acknowledgments</h2>
