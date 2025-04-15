@@ -94,14 +94,14 @@ with
 
 Because it's...  
 
-- **Adaptive**: can (i) represent complex multi-modal distributions and (ii) 
-  penalize Gaussian components out of the model.  
+- **Adaptive**: can penalize Gaussians out of the model.  
 - **Comprehensive**: can estimate site and regional chronologies
   simultaneously.  
 - **Efficient**: can be trained with minimal data pre-processing.  
 - **Flexible**: can (i) train on any inputs, even images! and (ii) model any 
   outputs or direct dates, notably radiocarbon and tree ring dates. 
 - **Probabilistic**: can quantify our uncertainty.  
+- **Smart**: can represent complex multi-modal distributions.
 - And **Familiar**: part of the same family of models used for
   calibrating and summarizing radiocarbon dates.  
 
