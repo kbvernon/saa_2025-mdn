@@ -42,6 +42,10 @@ $presentation-h5-font-size: 1.5em;
     strong {
         color: theme-color("orange");
     }
+
+    object svg {
+        font-family: $font-family-sans-serif
+    }
 }
 
 /* Title Page */

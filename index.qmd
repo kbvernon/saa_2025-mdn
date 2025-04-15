@@ -37,6 +37,9 @@ format:
 include-in-header: 
   text: |
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 ---
 
 ## The Goal
@@ -45,7 +48,7 @@ Estimate a **regional chronology $p(t)$** that effectively summarizes the
 individual [chronologies $p_i(t)$]{.text-purple-light} of all sites $s_i$ in a 
 region of interest. 
 
-::: {.mt-5 .mr-auto style="width: 85%;"}
+::: {.mt-5 .mr-auto style="width: 77%;"}
 <object data="figures/goal.svg" class="w-100"></object>
 :::
 
@@ -91,14 +94,14 @@ with
 
 Because it's...  
 
-- **Probabilistic**: can quantify our uncertainty.  
-- **Flexible**: can use any kind of input data, even images.  
-- **Adaptive**: can penalize Gaussian components out of the model.  
+- **Adaptive**: can (i) represent complex multi-modal distributions and (ii) 
+  penalize Gaussian components out of the model.  
 - **Comprehensive**: can estimate site and regional chronologies
   simultaneously.  
 - **Efficient**: can be trained with minimal data pre-processing.  
-- **Universal**: can be trained with any type of direct date (e.g., radiocarbon 
-  or tree ring).
+- **Flexible**: can (i) train on any inputs, even images! and (ii) model any 
+  outputs or direct dates, notably radiocarbon and tree ring dates. 
+- **Probabilistic**: can quantify our uncertainty.  
 - And **Familiar**: part of the same family of models used for
   calibrating and summarizing radiocarbon dates.  
 
@@ -116,7 +119,7 @@ Because it's...
 ## Coping Strategy
 
 ::: {.mt-5 .mr-auto .w-75}
-<object data="figures/spatial-data.svg" width="100%"></object>
+<object data="figures/coping-strategy.svg" width="100%"></object>
 :::
 
 ::: {.mt-5}
@@ -170,51 +173,53 @@ tells us how direct dates are related in space.
 
 ## Test Case: Central Mesa Verde
 
-::: {.mt-4 .w-50 .mx-auto}
-![](figures/mesa-verde.png){width="75%"}
+::: {.mt-4}
+![](figures/mesa-verde.png){.w-100}
 :::
 
 ## Diagnostics
 
-::: {.mt-4 .w-100}
-<object data="figures/cmv-sites.svg" class="w-100"></object>
+::: {.mt-4 style="width: 95%;"}
+<object data="figures/mesa-verde-sites.svg" class="w-100"></object>
 :::
 
 ## Spatial Aggregate Example
 
-::: {.mt-4 .w-75}
+::: {.mt-4 style="width: 68%;"}
 <object data="figures/bluff-br.svg" class="w-100"></object>
 :::
 
-::: {.ms-5 .mt-0}
+::: {.ms-3 .mt-0 .fs-4}
 [{{< iconify codicon:circle-filled >}}]{.text-blue} Tree Rings
 :::
 
 ## Regional Chronology
 
-::: {.mt-4 .w-75}
+::: {.mt-4 style="width: 67%;"}
 <object data="figures/regional-density.svg" class="w-100"></object>
 :::
 
+::: {.ms-4 .mt-0 .fs-4}
 Overspecified with $K = 128$ mixture components
+:::
 
 ## Site Chronologies
 
-::: {.mt-4 .w-100}
+::: {.mt-4 style="width: 95%;"}
 <object data="figures/important-sites-1.svg" class="w-100"></object>
 :::
 
-::: {.ms-5 .mt-0}
+::: {.ms-3 .mt-0 .fs-4}
 [{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
 :::
 
 ## More Site Chronologies
 
-::: {.mt-4 .w-75}
+::: {.mt-4 style="width: 64%;"}
 <object data="figures/important-sites-2.svg" class="w-100"></object>
 :::
 
-::: {.ms-5 .mt-0}
+::: {.ms-3 .mt-0 .fs-4}
 [{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
 
 These sites are right next to each other.

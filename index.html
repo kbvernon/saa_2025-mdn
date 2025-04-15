@@ -7,13 +7,13 @@
 <link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <script src="index_files/libs/quarto-contrib/iconify-2.1.0/iconify-icon.min.js"></script><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+  <meta name="generator" content="quarto-1.7.23">
 
   <meta name="author" content="K. Blake Vernon">
   <meta name="author" content="Brian Codding">
   <meta name="author" content="Scott Ortman">
   <meta name="author" content="Simon Brewer">
-  <meta name="dcterms.date" content="2025-04-12">
+  <meta name="dcterms.date" content="2025-04-15">
   <title>Indirect Dating With Mixture Density Networks</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,7 +33,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-226e2b31cd891684a2563e4feb24986a.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-56aab5bf93e6caaad8a685b62476c1ed.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -126,6 +126,9 @@
     }
   </style>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -202,7 +205,7 @@
         </div>
         <div class="denver-details">
             <div class="details">
-                <p class="date">2025-04-12</p>
+                <p class="date">2025-04-15</p>
                                 <p>
                     <a href="https://github.com/kbvernon/saa_2025-mdn">
                         <span class="fa6-brands--github"></span> kbvernon/saa_2025-mdn
@@ -215,7 +218,7 @@
 <section id="the-goal" class="slide level2">
 <h2>The Goal</h2>
 <p>Estimate a <strong>regional chronology <span class="math inline">\(p(t)\)</span></strong> that effectively summarizes the individual <span class="text-purple-light">chronologies <span class="math inline">\(p_i(t)\)</span></span> of all sites <span class="math inline">\(s_i\)</span> in a region of interest.</p>
-<div class="mt-5 mr-auto" style="width: 85%;">
+<div class="mt-5 mr-auto" style="width: 77%;">
 <object data="figures/goal.svg" class="w-100">
 </object>
 </div>
@@ -259,17 +262,15 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 <h2>Why MDN?</h2>
 <p>Because it’s…</p>
 <ul>
-<li><strong>Probabilistic</strong>: can quantify our uncertainty.<br>
-</li>
-<li><strong>Flexible</strong>: can use any kind of input data, even images.<br>
-</li>
-<li><strong>Adaptive</strong>: can penalize Gaussian components out of the model.<br>
+<li><strong>Adaptive</strong>: can (i) represent complex multi-modal distributions and (ii) penalize Gaussian components out of the model.<br>
 </li>
 <li><strong>Comprehensive</strong>: can estimate site and regional chronologies simultaneously.<br>
 </li>
 <li><strong>Efficient</strong>: can be trained with minimal data pre-processing.<br>
 </li>
-<li><strong>Universal</strong>: can be trained with any type of direct date (e.g., radiocarbon or tree ring).</li>
+<li><strong>Flexible</strong>: can (i) train on any inputs, even images! and (ii) model any outputs or direct dates, notably radiocarbon and tree ring dates.</li>
+<li><strong>Probabilistic</strong>: can quantify our uncertainty.<br>
+</li>
 <li>And <strong>Familiar</strong>: part of the same family of models used for calibrating and summarizing radiocarbon dates.</li>
 </ul>
 </section>
@@ -289,7 +290,7 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 <section id="coping-strategy" class="slide level2">
 <h2>Coping Strategy</h2>
 <div class="mt-5 mr-auto w-75">
-<object data="figures/spatial-data.svg" width="100%">
+<object data="figures/coping-strategy.svg" width="100%">
 </object>
 </div>
 <div class="mt-5">
@@ -335,52 +336,54 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
 </section>
 <section id="test-case-central-mesa-verde" class="slide level2">
 <h2>Test Case: Central Mesa Verde</h2>
-<div class="mt-4 w-50 mx-auto">
-<p><img data-src="figures/mesa-verde.png" style="width:75.0%"></p>
+<div class="mt-4">
+<p><img data-src="figures/mesa-verde.png" class="w-100"></p>
 </div>
 </section>
 <section id="diagnostics" class="slide level2">
 <h2>Diagnostics</h2>
-<div class="mt-4 w-100">
-<object data="figures/cmv-sites.svg" class="w-100">
+<div class="mt-4" style="width: 95%;">
+<object data="figures/mesa-verde-sites.svg" class="w-100">
 </object>
 </div>
 </section>
 <section id="spatial-aggregate-example" class="slide level2">
 <h2>Spatial Aggregate Example</h2>
-<div class="mt-4 w-75">
+<div class="mt-4" style="width: 68%;">
 <object data="figures/bluff-br.svg" class="w-100">
 </object>
 </div>
-<div class="ms-5 mt-0">
+<div class="ms-3 mt-0 fs-4">
 <p><span class="text-blue"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Rings</p>
 </div>
 </section>
 <section id="regional-chronology" class="slide level2">
 <h2>Regional Chronology</h2>
-<div class="mt-4 w-75">
+<div class="mt-4" style="width: 67%;">
 <object data="figures/regional-density.svg" class="w-100">
 </object>
 </div>
+<div class="ms-4 mt-0 fs-4">
 <p>Overspecified with <span class="math inline">\(K = 128\)</span> mixture components</p>
+</div>
 </section>
 <section id="site-chronologies" class="slide level2">
 <h2>Site Chronologies</h2>
-<div class="mt-4 w-100">
+<div class="mt-4" style="width: 95%;">
 <object data="figures/important-sites-1.svg" class="w-100">
 </object>
 </div>
-<div class="ms-5 mt-0">
+<div class="ms-3 mt-0 fs-4">
 <p><span class="text-yellow"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Ring Dates</p>
 </div>
 </section>
 <section id="more-site-chronologies" class="slide level2">
 <h2>More Site Chronologies</h2>
-<div class="mt-4 w-75">
+<div class="mt-4" style="width: 64%;">
 <object data="figures/important-sites-2.svg" class="w-100">
 </object>
 </div>
-<div class="ms-5 mt-0">
+<div class="ms-3 mt-0 fs-4">
 <p><span class="text-yellow"><iconify-icon role="img" inline="" icon="codicon:circle-filled" aria-label="Icon circle-filled from codicon Iconify.design set." title="Icon circle-filled from codicon Iconify.design set."></iconify-icon></span> Tree Ring Dates</p>
 <p>These sites are right next to each other.</p>
 </div>
@@ -617,190 +620,172 @@ p(t \mid x) = \sum_{k=1}^{K} \pi_k(x)\; \mathcal{N} (t \mid \mu_k(x),\; \sigma_{
       });
     </script>
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
-          }
-        }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
-          }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
             }
           }
-          return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp('/' + window.location.host + '/');
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          return false;
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
             }
-          }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
         }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
-          }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
-          }
-        } else {
-          return undefined;
-        }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
               }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>

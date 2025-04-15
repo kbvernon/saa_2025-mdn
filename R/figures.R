@@ -1,3 +1,4 @@
+library(arcgislayers)
 library(colorspace)
 library(magick)
 library(patchwork)
@@ -5,11 +6,10 @@ library(sf)
 library(terra)
 library(tidyterra)
 library(tidyverse)
-library(tigris)
 
 # default theme ----------------------------------------------------------
 
-theme_set(theme_bw(14))
+theme_set(theme_bw(12))
 
 theme_update(
   axis.text = element_blank(),
@@ -19,6 +19,39 @@ theme_update(
   text = element_text(family = "Public Sans")
 )
 
+coolors <- list(
+  "darkblue" = "#2A324B",
+  "yellow"   = "#FFD23F",
+  "orange"   = "#CD5334",
+  "purple"   = "#533747",
+  "blue"     = "#28666E",
+  "gray"     = "#829399"
+)
+
+coolors_lt <- lighten(coolors, 0.5)
+coolors_dk <- darken(coolors, 0.5)
+
+public_sans <- file.path(
+  "https://fonts.googleapis.com",
+  "css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+)
+
+# ggplot2 3.5.2.9000 now supports absolute panel sizing!
+ph <- unit(3, "in")
+
+get_dims <- function(x, panel_width, panel_height) {
+  # get dimensions around plot panel in millimeters
+  d <- patchwork::get_dim(x)
+
+  # convert to inches and sum
+  d <- lapply(unclass(d), \(z) ggplot2::unit(0.0393701 * sum(z), "in"))
+
+  w <- panel_width + d[["l"]] + d[["r"]]
+  h <- panel_height + d[["t"]] + d[["b"]]
+
+  c(w, h)
+}
+
 # data -------------------------------------------------------------------
 
 tree_rings <- read_csv("_data/tree-rings.csv")
@@ -26,10 +59,21 @@ tree_rings <- read_csv("_data/tree-rings.csv")
 ceramics <- read_csv("_data/ceramic-presence.csv")
 lookup <- read_csv("_data/ceramic-lookup.csv")
 
-four_corners <- states() |>
-  rename_with(tolower) |>
-  filter(name %in% c("Utah", "Colorado", "New Mexico", "Arizona")) |>
-  select(name)
+# four corners
+furl <- file.path(
+  "https://tigerweb.geo.census.gov",
+  "arcgis/rest/services",
+  "TIGERweb",
+  "State_County",
+  "MapServer/0"
+) |> arc_open()
+
+four_corners <- furl |>
+  arc_select(
+    fields = "NAME",
+    where = "NAME IN ('Utah', 'Colorado', 'New Mexico', 'Arizona')"
+  ) |>
+  rename_with(tolower)
 
 # probability distributions
 region <- read_csv("_data/region.csv")
@@ -54,8 +98,8 @@ p1 <- ggplot(sites, aes(x, y)) +
   geom_point(
     size = 3,
     shape = 21,
-    fill = lighten("#533747", 0.5),
-    color = "#533747"
+    fill = coolors_lt[["purple"]],
+    color = coolors[["purple"]]
   ) +
   annotate(
     "text",
@@ -70,10 +114,13 @@ p1 <- ggplot(sites, aes(x, y)) +
     y = "Northing"
   ) +
   coord_cartesian(xlim = c(0, 10), ylim = c(0, 10)) +
-  theme(plot.margin = margin(r = 6))
+  theme(
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(r = 12)
+  )
 
-# sample gmm -------------------------------------------------------------
-
+# sample gmm
 rgmm <- function(n, theta) {
   # rmultinom returns a length(prob) x n matrix
   y <- apply(
@@ -119,7 +166,7 @@ for (i in 1:N) {
     y = dgmm(x, theta)
   )
 
-  rm(i, K, w, theta)
+  rm(i, K, w, n_mu, mu, theta)
 }
 
 chrono <- bind_rows(chrono)
@@ -142,8 +189,8 @@ p2 <- ggplot() +
   scale_color_manual(
     name = NULL,
     values = c(
-      "Site Chronology" = adjust_transparency(lighten("#533747", 0.5), 0.35),
-      "Regional Chronology" = "#CD5334"
+      "Site Chronology" = alpha(coolors_lt[["purple"]], 0.35),
+      "Regional Chronology" = coolors[["orange"]]
     )
   ) +
   scale_linewidth_manual(
@@ -159,16 +206,26 @@ p2 <- ggplot() +
   ) +
   theme(
     legend.position = "none",
-    plot.margin = margin(l = 6)
+    panel.heights = ph,
+    panel.widths = 1.3 * ph,
+    plot.margin = margin(l = 12)
   )
 
-p1 + p2 + plot_layout(widths = c(1, 2), heights = 1)
+free(p1) + free(p2)
+
+dims <- get_dims(p1, ph, ph) + get_dims(p2, 1.3 * ph, ph)
+dims[2] <- dims[2] / 2
+
+fn <- "figures/goal.svg"
 
 ggsave(
-  "figures/goal.svg",
-  width = 7.5,
-  height = 2.8
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  web_fonts = list(public_sans)
 )
+
+remove(N, sites, s, rgmm, dgmm, chrono, p1, p2, dims, fn)
 
 # mesa verde -------------------------------------------------------------
 
@@ -178,14 +235,21 @@ bb8 <- tree_rings |>
   st_transform(4269) |>
   st_bbox()
 
-dx <- bb8[["xmax"]] - bb8[["xmin"]]
 dy <- bb8[["ymax"]] - bb8[["ymin"]]
+dx <- dy * 3
 
-dem <- file.path(
+mx <- mean(bb8[c("xmax", "xmin")])
+
+bb8[["xmin"]] <- mx - (dx / 2)
+bb8[["xmax"]] <- mx + (dx / 2)
+
+vrt <- file.path(
   "https://prd-tnm.s3.amazonaws.com/StagedProducts",
   "Elevation/13/TIFF",
   "USGS_Seamless_DEM_13.vrt"
-) |>
+)
+
+dem <- vrt |>
   rast(win = ext(bb8)) |>
   aggregate(fact = 4)
 
@@ -205,7 +269,7 @@ bb9 <- tree_rings |>
 
 cover <- st_sym_difference(bb9, st_as_sfc(bb8))
 
-ggplot() +
+p1 <- ggplot() +
   geom_spatraster(
     data = hill,
     fill = hcl.colors(1000, "Grays")[values(hill)],
@@ -221,18 +285,24 @@ ggplot() +
   geom_sf(
     data = four_corners,
     fill = "transparent",
-    color = "#829399",
+    color = coolors[["gray"]],
     linewidth = 0.2
+  ) +
+  geom_sf(
+    data = bb9,
+    fill = "transparent",
+    color = coolors[["purple"]],
+    linewidth = 0.6
   ) +
   annotate(
     "text",
     x = c(rep(bb8[["xmin"]] + 0.02, 2), rep(bb8[["xmax"]] - 0.02, 2)),
     y = 36.999 + c(0.02, -0.02, 0.02, -0.02),
-    label = c("UT", "AZ", "CO", "NM"),
+    label = c("Utah", "Arizona", "Colorado", "New Mexico"),
     size = 11 / .pt,
     hjust = c(0, 0, 1, 1),
     vjust = c(0, 1, 0, 1),
-    color = "#829399"
+    color = coolors[["gray"]]
   ) +
   coord_sf(
     crs = 4269,
@@ -243,32 +313,43 @@ ggplot() +
   ) +
   theme(
     axis.title = element_blank(),
-    legend.position = "none"
+    legend.position = "none",
+    panel.heights = ph,
+    panel.widths = 3 * ph,
+    plot.margin = margin()
   )
 
+p1
+
+dims <- get_dims(p1, 3 * ph, ph)
+
+fn <- "figures/mesa-verde.png"
+
 ggsave(
-  "figures/mesa-verde.png",
-  width = 6,
-  height = 6 * (dy / dx),
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
   bg = "white"
 )
 
-image_read("figures/mesa-verde.png") |>
-  image_trim() |>
-  image_write("figures/mesa-verde.png")
-
-image_read("figures/mesa-verde.png") |>
+image_read(fn) |>
   image_negate() |>
   image_modulate(hue = 200) |>
   image_write("figures/mesa-verde-invert.png")
+
+remove(
+  bb8, bb9, dx, dy, mx, furl,
+  hill, vrt, slope, aspect, dem, cover,
+  p1, dims, fn
+)
 
 # mesa verde data --------------------------------------------------------
 
 p1 <- ggplot(ceramics, aes(x, y)) +
   geom_point(
     shape = 21,
-    fill = "#533747",
-    color = darken("#533747", 0.6),
+    fill = coolors[["purple"]],
+    color = coolors_dk[["purple"]],
     alpha = 0.33,
     size = 2
   ) +
@@ -283,15 +364,17 @@ p1 <- ggplot(ceramics, aes(x, y)) +
   ) +
   theme(
     axis.title = element_text(size = rel(0.8)),
-    plot.margin = margin(r = 2),
-    plot.title = element_text(color = "#533747")
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(r = 6),
+    plot.title = element_text(color = coolors[["purple"]])
   )
 
 p2 <- ggplot(tree_rings, aes(x, y)) +
   geom_point(
     shape = 21,
-    fill = "#CD5334",
-    color = darken("#CD5334", 0.6),
+    fill = coolors[["orange"]],
+    color = coolors_dk[["orange"]],
     alpha = 0.33,
     size = 2
   ) +
@@ -306,15 +389,17 @@ p2 <- ggplot(tree_rings, aes(x, y)) +
   ) +
   theme(
     axis.title = element_text(size = rel(0.8)),
-    plot.margin = margin(l = 2, r = 2),
-    plot.title = element_text(color = "#CD5334")
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(l = 6, r = 6),
+    plot.title = element_text(color = coolors[["orange"]])
   )
 
 p3 <- ggplot(tree_rings) +
   geom_density(
     aes(date),
-    color = darken("#CD5334", 0.6),
-    fill = alpha("#CD5334", 0.5)
+    fill = alpha(coolors[["orange"]], 0.5),
+    color = coolors_dk[["orange"]],
   ) +
   labs(
     x = NULL,
@@ -326,16 +411,27 @@ p3 <- ggplot(tree_rings) +
     axis.text.x = element_text(),
     legend.direction = "vertical",
     legend.position = "bottom",
-    plot.margin = margin(l = 2)
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(l = 6)
   )
 
 p1 + p2 + p3
 
+dims <- get_dims(p1, ph, ph) + get_dims(p2, ph, ph) + get_dims(p3, ph, ph)
+dims[2] <- get_dims(p3, ph, ph)[2]
+
+fn <- "figures/mesa-verde-sites.svg"
+
 ggsave(
-  filename = "figures/cmv-sites.svg",
-  width = 9,
-  height = 3.5
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  bg = "white",
+  web_fonts = list(public_sans)
 )
+
+remove(p1, p2, p3, dims, fn)
 
 # spatial aggregates -----------------------------------------------------
 
@@ -355,7 +451,7 @@ p1 <- ggplot() +
   geom_point(
     data = tree_rings,
     aes(x, y),
-    color = alpha("#28666E", 0.1)
+    color = alpha(coolors[["blue"]], 0.1)
   ) +
   coord_cartesian(
     xlim = range(ceramics[["x"]]),
@@ -369,7 +465,10 @@ p1 <- ggplot() +
   ) +
   theme(
     legend.position = "none",
-    panel.background = element_rect(fill = "#FFFFE5")
+    panel.heights = ph,
+    panel.widths = ph,
+    panel.background = element_rect(fill = "#FFFFE5"),
+    plot.margin = margin(r = 6)
   )
 
 d <- MASS::kde2d(bluff_br[["x"]], bluff_br[["y"]])
@@ -383,39 +482,52 @@ p2 <- d |>
   mutate(date = tree_rings[["date"]]) |>
   filter(!is.na(density)) |>
   ggplot(aes(density, date)) +
-  geom_point(alpha = 0.1, color = "#28666E") +
+  geom_point(alpha = 0.1, color = coolors[["blue"]]) +
   labs(
     x = "Density of Bluff B-r Sites",
     y = "Tree Ring Date"
+  ) +
+  theme(
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(l = 6)
   )
 
 p1 + p2
 
+dims <- get_dims(p1, ph, ph) + get_dims(p2, ph, ph)
+dims[2] <- get_dims(p1, ph, ph)[2]
+
+fn <- "figures/bluff-br.svg"
+
 ggsave(
-  "figures/bluff-br.svg",
-  width = 6.8,
-  height = 3.5
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  bg = "white",
+  web_fonts = list(public_sans)
 )
 
-# models -----------------------------------------------------------------
+remove(p1, d, p2, dims, fn)
 
+# regional chronology ----------------------------------------------------
 
-
-tree_rings <- density(tree_rings$date)
-tree_rings <- tibble(year = tree_rings$x, density = tree_rings$y)
-tree_rings <- tree_rings |>
+trd <- density(tree_rings[["date"]])
+trd <- trd[c("x", "y")] |>
+  as_tibble() |>
+  rename("year" = x, "density" = y) |>
   mutate(density = density / max(density)) |>
   filter(year >= 575, year <= 1400)
 
-p1 <- ggplot(tree_rings, aes(year)) +
+p1 <- ggplot(trd, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
-    fill = alpha("#CD5334", 0.5)
+    fill = alpha(coolors[["orange"]], 0.5)
   ) +
   geom_line(
     aes(y = density),
-    color = darken("#CD5334", 0.6)
+    color = coolors_dk[["orange"]]
   ) +
   labs(
     x = NULL,
@@ -429,20 +541,22 @@ p1 <- ggplot(tree_rings, aes(year)) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
-    plot.margin = margin(r = 2)
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(r = 6)
   )
 
-region <- region |> mutate(density = density / max(density))
+rd <- region |> mutate(density = density / max(density))
 
-p2 <- ggplot(region, aes(year)) +
+p2 <- ggplot(rd, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
-    fill = alpha("#28666E", 0.5)
+    fill = alpha(coolors[["blue"]], 0.5)
   ) +
   geom_line(
     aes(y = density),
-    color = darken("#28666E", 0.6)
+    color = coolors_dk[["blue"]]
   ) +
   labs(
     x = NULL,
@@ -456,19 +570,29 @@ p2 <- ggplot(region, aes(year)) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
-    plot.margin = margin(l = 2)
+    panel.heights = ph,
+    panel.widths = ph,
+    plot.margin = margin(l = 6)
   )
 
-p3 + p4 + plot_layout(axis_titles = "collect")
+p1 + p2 + plot_layout(axis_titles = "collect")
+
+dims <- get_dims(p1, ph, ph) + get_dims(p2, ph, ph)
+dims[2] <- dims[2] / 2
+
+fn <- "figures/regional-density.svg"
 
 ggsave(
-  "figures/regional-density.svg",
-  width = 7,
-  height = 3.5
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  bg = "white",
+  web_fonts = list(public_sans)
 )
 
-tree_rings <- read_csv("_data/tree-rings.csv")
+remove(trd, p1, rd, p2, dims, fn)
 
+# site chronologies ------------------------------------------------------
 
 sites1 <- sites |>
   filter(
@@ -478,7 +602,7 @@ sites1 <- sites |>
   )
 
 tr1 <- tree_rings |>
-  filter(trinomial %in% unique(sites1$site_trinomial)) |>
+  filter(trinomial %in% unique(sites1[["site_trinomial"]])) |>
   select(trinomial, date) |>
   rename(site_trinomial = trinomial) |>
   left_join(
@@ -486,23 +610,22 @@ tr1 <- tree_rings |>
     by = "site_trinomial"
   )
 
-
-ggplot(sites1, aes(year)) +
+p1 <- ggplot(sites1, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
-    fill = alpha("#28666E", 0.5)
+    fill = alpha(coolors[["blue"]], 0.5)
   ) +
   geom_line(
     aes(y = density),
-    color = darken("#28666E", 0.6)
+    color = coolors_dk[["blue"]]
   ) +
   geom_point(
     data = tr1,
     aes(x = date, y = 0.05),
     size = 1.5,
     alpha = 0.4,
-    color = "#FFD23F"
+    color = coolors[["yellow"]]
   ) +
   facet_wrap(vars(site_name)) +
   labs(
@@ -517,16 +640,27 @@ ggplot(sites1, aes(year)) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
-    plot.margin = margin(l = 2),
+    panel.heights = rep(ph, 3),
+    panel.widths = rep(ph, 3),
     strip.background = element_blank(),
     strip.text = element_text(size = rel(1.1), hjust = 0)
   )
 
+p1
+
+dims <- get_dims(p1, 3 * ph, ph)
+
+fn <- "figures/important-sites-1.svg"
+
 ggsave(
-  filename = "figures/important-sites-1.svg",
-  width = 9,
-  height = 3.5
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  bg = "white",
+  web_fonts = list(public_sans)
 )
+
+remove(sites1, tr1, p1, dims, fn)
 
 sites2 <- sites |>
   filter(
@@ -536,7 +670,7 @@ sites2 <- sites |>
   )
 
 tr2 <- tree_rings |>
-  filter(trinomial %in% unique(sites2$site_trinomial)) |>
+  filter(trinomial %in% unique(sites2[["site_trinomial"]])) |>
   select(trinomial, date) |>
   rename(site_trinomial = trinomial) |>
   left_join(
@@ -544,22 +678,22 @@ tr2 <- tree_rings |>
     by = "site_trinomial"
   )
 
-ggplot(sites2, aes(year)) +
+p2 <- ggplot(sites2, aes(year)) +
   geom_ribbon(
     aes(ymin = 0, ymax = density),
     color = "transparent",
-    fill = alpha("#28666E", 0.5)
+    fill = alpha(coolors[["blue"]], 0.5)
   ) +
   geom_line(
     aes(y = density),
-    color = darken("#28666E", 0.6)
+    color = coolors_dk[["blue"]]
   ) +
   geom_point(
     data = tr2,
     aes(x = date, y = 0.05),
     size = 1.5,
     alpha = 0.4,
-    color = "#FFD23F"
+    color = coolors[["yellow"]]
   ) +
   facet_wrap(vars(site_name)) +
   labs(
@@ -574,13 +708,24 @@ ggplot(sites2, aes(year)) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
-    plot.margin = margin(l = 2),
+    panel.heights = rep(ph, 2),
+    panel.widths = rep(ph, 2),
     strip.background = element_blank(),
     strip.text = element_text(size = rel(1.1), hjust = 0)
   )
 
+p2
+
+dims <- get_dims(p2, 2 * ph, ph)
+
+fn <- "figures/important-sites-2.svg"
+
 ggsave(
-  filename = "figures/important-sites-2.svg",
-  width = 6.3,
-  height = 3.5
+  filename = fn,
+  width = dims[1],
+  height = dims[2],
+  bg = "white",
+  web_fonts = list(public_sans)
 )
+
+remove(sites2, tr2, p2, dims, fn)
