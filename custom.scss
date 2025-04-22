@@ -91,6 +91,11 @@ $presentation-h5-font-size: 1.5em;
                     padding-left: 0em;
                     padding-right: 0em;
                     width: 100%;
+
+                    .quarto-title-author-orcid img {
+                        vertical-align: text-top;
+                        margin: 6px 0;
+                    }
                 }
 
                 .quarto-title-affiliation {
