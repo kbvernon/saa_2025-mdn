@@ -233,3 +233,23 @@ These sites are right next to each other.
 3. Get more **data {{< iconify material-symbols:save-outline-rounded >}}**!
 
 ## Acknowledgments
+
+::: {.ma-3 .w-25 .absolute top="15%" left="0%"}
+<object data="figures/logo-sci.svg" class="w-75"></object>
+:::
+
+::: {.ma-3 .w-25 .absolute top="14%" left="25%"}
+<object data="figures/logo-nsf.svg" class="w-50"></object>
+:::
+
+::: {.ma-3 .w-50 .absolute top="40%" left="0%"}
+<object data="figures/logo-asw.png" class="w-75"></object>
+:::
+
+::: {.ma-3 .absolute top="37%" left="45%"}
+<object data="figures/logo-cybersw.png" class="w-100"></object>
+:::
+
+::: {.ma-3 .w-75 .absolute top="60%" left="0%"}
+<object data="figures/logo-uuac.png" class="w-50"></object>
+:::
