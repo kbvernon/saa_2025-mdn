@@ -94,16 +94,12 @@ with
 
 Because it's...  
 
-- **Adaptive**: can penalize Gaussians out of the model.  
 - **Comprehensive**: can estimate site and regional chronologies
   simultaneously.  
-- **Efficient**: can be trained with minimal data pre-processing.  
 - **Flexible**: can (i) train on any inputs, even images! and (ii) model any 
   outputs or direct dates, notably radiocarbon and tree ring dates. 
 - **Probabilistic**: can quantify our uncertainty.  
-- **Smart**: can represent complex multi-modal distributions.
-- And **Familiar**: part of the same family of models used for
-  calibrating and summarizing radiocarbon dates.  
+- **Smart**: can represent complex multi-modal distributions. 
 
 ## Still A Gaggle of Challenges
 
@@ -181,16 +177,6 @@ tells us how direct dates are related in space.
 
 ::: {.mt-4 style="width: 95%;"}
 <object data="figures/mesa-verde-sites.svg" class="w-100"></object>
-:::
-
-## Spatial Aggregate Example
-
-::: {.mt-4 style="width: 68%;"}
-<object data="figures/bluff-br.svg" class="w-100"></object>
-:::
-
-::: {.ms-3 .mt-0 .fs-4}
-[{{< iconify codicon:circle-filled >}}]{.text-blue} Tree Rings
 :::
 
 ## Regional Chronology
