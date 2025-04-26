@@ -239,3 +239,7 @@ These sites are right next to each other.
 ::: {.ma-3 .absolute top="37%" left="45%"}
 <object data="figures/logo-cybersw.png" class="w-100"></object>
 :::
+
+::: {.ma-3 .w-75 .absolute top="58%" left="0%"}
+<object data="figures/logo-cfas.png" class="w-50"></object>
+:::
