@@ -55,7 +55,7 @@ get_dims <- function(x, panel_width, panel_height) {
 # data -------------------------------------------------------------------
 
 tree_rings <- read_csv("_data/tree-rings.csv")
-
+room_counts <- read_csv("_data/room-counts.csv")
 ceramics <- read_csv("_data/ceramic-presence.csv")
 lookup <- read_csv("_data/ceramic-lookup.csv")
 
@@ -366,7 +366,7 @@ p1 <- ggplot(ceramics, aes(x, y)) +
     axis.title = element_text(size = rel(0.8)),
     panel.heights = ph,
     panel.widths = ph,
-    plot.margin = margin(r = 6),
+    plot.margin = margin(r = 4),
     plot.title = element_text(color = coolors[["purple"]])
   )
 
@@ -391,29 +391,35 @@ p2 <- ggplot(tree_rings, aes(x, y)) +
     axis.title = element_text(size = rel(0.8)),
     panel.heights = ph,
     panel.widths = ph,
-    plot.margin = margin(l = 6, r = 6),
+    plot.margin = margin(l = 4, r = 4),
     plot.title = element_text(color = coolors[["orange"]])
   )
 
-p3 <- ggplot(tree_rings) +
-  geom_density(
-    aes(date),
-    fill = alpha(coolors[["orange"]], 0.5),
-    color = coolors_dk[["orange"]],
+p3 <- ggplot(room_counts) +
+  geom_point(
+    aes(x, y),
+    shape = 21,
+    fill = coolors[["blue"]],
+    color = coolors_dk[["blue"]],
+    alpha = 0.33,
+    size = 2
   ) +
   labs(
     x = NULL,
     y = NULL,
-    title = "Cutting Date Density"
+    title = "Rooms XY"
   ) +
-  scale_x_continuous(breaks = c(800, 1000, 1200)) +
+  coord_cartesian(
+    xlim = range(ceramics[["x"]]),
+    ylim = range(ceramics[["y"]])
+  ) +
   theme(
-    axis.text.x = element_text(),
-    legend.direction = "vertical",
-    legend.position = "bottom",
+    axis.title = element_text(size = rel(0.8)),
+    legend.position = "none",
     panel.heights = ph,
     panel.widths = ph,
-    plot.margin = margin(l = 6)
+    plot.margin = margin(l = 4),
+    plot.title = element_text(color = coolors[["blue"]])
   )
 
 p1 + p2 + p3
@@ -531,19 +537,19 @@ p1 <- ggplot(trd, aes(year)) +
   ) +
   labs(
     x = NULL,
-    y = "Probability Density",
+    y = NULL,
     title = "Kernel Density"
   ) +
   scale_x_continuous(
     limits = c(575, 1400),
-    breaks = c(600, 800, 1000, 1200, 1400)
+    breaks = c(800, 1000, 1200)
   ) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
     panel.heights = ph,
     panel.widths = ph,
-    plot.margin = margin(r = 6)
+    plot.margin = margin(r = 3)
   )
 
 rd <- region |> mutate(density = density / max(density))
@@ -560,25 +566,25 @@ p2 <- ggplot(rd, aes(year)) +
   ) +
   labs(
     x = NULL,
-    y = "Probability Density",
+    y = NULL,
     title = "Mixture Density"
   ) +
   scale_x_continuous(
     limits = c(575, 1400),
-    breaks = c(600, 800, 1000, 1200, 1400)
+    breaks = c(800, 1000, 1200)
   ) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
     panel.heights = ph,
     panel.widths = ph,
-    plot.margin = margin(l = 6)
+    plot.margin = margin(l = 3)
   )
 
-p1 + p2 + plot_layout(axis_titles = "collect")
+p1 + p2
 
 dims <- get_dims(p1, ph, ph) + get_dims(p2, ph, ph)
-dims[2] <- dims[2] / 2
+dims[2] <- get_dims(p1, ph, ph)[2]
 
 fn <- "figures/regional-density.svg"
 
@@ -630,25 +636,25 @@ p1 <- ggplot(sites1, aes(year)) +
   facet_wrap(vars(site_name)) +
   labs(
     x = NULL,
-    y = "Probability Density"
+    y = NULL
   ) +
   scale_x_continuous(
     limits = c(575, 1400),
-    breaks = c(600, 800, 1000, 1200, 1400),
-    labels = c("", 800, 1000, 1200, "")
+    breaks = c(800, 1000, 1200)
   ) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
     panel.heights = rep(ph, 3),
     panel.widths = rep(ph, 3),
+    plot.margin = margin(),
     strip.background = element_blank(),
     strip.text = element_text(size = rel(1.1), hjust = 0)
   )
 
 p1
 
-dims <- get_dims(p1, 3 * ph, ph)
+dims <- get_dims(p1, 3.1 * ph, ph)
 
 fn <- "figures/important-sites-1.svg"
 
@@ -698,25 +704,25 @@ p2 <- ggplot(sites2, aes(year)) +
   facet_wrap(vars(site_name)) +
   labs(
     x = NULL,
-    y = "Probability Density"
+    y = NULL
   ) +
   scale_x_continuous(
     limits = c(575, 1400),
-    breaks = c(600, 800, 1000, 1200, 1400),
-    labels = c("", 800, 1000, 1200, "")
+    breaks = c(800, 1000, 1200)
   ) +
   scale_y_continuous(breaks = seq(0, 1, by = 0.25)) +
   theme(
     axis.text.x = element_text(),
     panel.heights = rep(ph, 2),
     panel.widths = rep(ph, 2),
+    plot.margin = margin(),
     strip.background = element_blank(),
     strip.text = element_text(size = rel(1.1), hjust = 0)
   )
 
 p2
 
-dims <- get_dims(p2, 2 * ph, ph)
+dims <- get_dims(p2, 2.1 * ph, ph)
 
 fn <- "figures/important-sites-2.svg"
 

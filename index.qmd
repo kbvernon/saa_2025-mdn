@@ -181,11 +181,11 @@ tells us how direct dates are related in space.
 
 ## Regional Chronology
 
-::: {.mt-4 style="width: 67%;"}
+::: {.mt-4 style="width: 63%;"}
 <object data="figures/regional-density.svg" class="w-100"></object>
 :::
 
-::: {.ms-4 .mt-0 .fs-4}
+::: {.mt-0 .fs-4}
 Overspecified with $K = 128$ mixture components
 :::
 
@@ -195,17 +195,17 @@ Overspecified with $K = 128$ mixture components
 <object data="figures/important-sites-1.svg" class="w-100"></object>
 :::
 
-::: {.ms-3 .mt-0 .fs-4}
+::: {.mt-0 .fs-4}
 [{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
 :::
 
 ## More Site Chronologies
 
-::: {.mt-4 style="width: 64%;"}
+::: {.mt-4 style="width: 63%;"}
 <object data="figures/important-sites-2.svg" class="w-100"></object>
 :::
 
-::: {.ms-3 .mt-0 .fs-4}
+::: {.mt-0 .fs-4}
 [{{< iconify codicon:circle-filled >}}]{.text-yellow} Tree Ring Dates
 
 These sites are right next to each other.
